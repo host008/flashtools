@@ -43,11 +43,16 @@ html = '''
 '''
 
 gui = [
+    [sg.Text('Flash Game Creator')],
+    [sg.Text('Flash Game Name:'), sg.InputText(key = 'game_name')],
     [sg.Text('Flash Game Location:'), sg.InputText(), sg.FileBrowse(key = 'game_location')],
     [sg.Text('Directory to save to:'), sg.InputText(), sg.FolderBrowse(key = 'save_location')],
     [sg.Text('Folder Name:'), sg.InputText(key = 'folder_name')],
     [sg.Text('Splash/Logo Image: '), sg.InputText(), sg.FileBrowse(key = 'splash_image')],
+    [sg.Checkbox('Generate a JSON Template', key = 'json')],
     [sg.Button('Create'), sg.Button('Exit')],
+    [sg.Text('JSON Template Output:')],
+    [sg.Output(size = (50, 10), key = 'output')],
     [sg.Text('Made by @host008')]
 ]
 flashtools = sg.Window('Flash Game Creator', gui)
@@ -64,4 +69,12 @@ while True:
                 f.write(html)
             shutil.copy(values['game_location'], values['save_location'] + '/' + values['folder_name'] + '/game.swf')
             shutil.copy(values['splash_image'], values['save_location'] + '/' + values['folder_name'] + '/splash.png')
+            if values['json']:
+                flashtools.find_element('output').Update('''
+    {
+        "name": "%s",
+        "root": "%s",
+        "file": "index.html",
+        "img": "splash.png"
+    },''' % (values['game_name'], values['folder_name']))    
             sg.popup('Done!')
